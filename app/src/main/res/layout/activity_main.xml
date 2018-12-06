@@ -6,42 +6,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_layout"
-        tools:context=".MainActivity">
+        tools:context=".core.MainActivity">
 
 
-    <android.support.design.widget.TextInputLayout
-            android:id="@+id/t"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content" android:layout_alignParentStart="true"
-            android:layout_marginStart="104dp" android:layout_alignParentTop="true" android:layout_marginTop="65dp">
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/horizontal_recycler_view"
+            android:orientation="horizontal">
 
-        <android.support.design.widget.TextInputEditText
-                android:layout_width="173dp"
-                android:layout_height="wrap_content"
-                android:hint="name" android:id="@+id/tiet_name"/>
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-            android:layout_width="174dp"
-            android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_marginTop="142dp"
-            android:layout_alignStart="@+id/t">
+    </android.support.v7.widget.RecyclerView>
 
-        <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="surname" android:id="@+id/tiet_surname"/>
-    </android.support.design.widget.TextInputLayout>
-    <Button
-            android:text="Add"
-            android:textAllCaps="false"
-            android:layout_width="148dp"
-            android:layout_height="wrap_content" android:layout_alignParentTop="true" android:id="@+id/b_add_entry"
-            android:layout_marginTop="219dp" android:layout_alignStart="@+id/t"
-            android:background="@color/colorPrimary" android:layout_marginStart="-91dp"/>
-    <Button
-            android:text="Show"
-            android:textAllCaps="false"
-            android:layout_width="148dp"
-            android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_marginEnd="19dp"
-            android:layout_alignTop="@+id/b_add_entry" android:id="@+id/b_show_last_entry"
-            android:layout_marginTop="0dp" android:background="@color/colorPrimary"/>
 </RelativeLayout>
