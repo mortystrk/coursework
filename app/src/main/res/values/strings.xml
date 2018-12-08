@@ -17,4 +17,7 @@
     <string name="enter_pass_text">Введите пароль</string>
     <string name="repeat_pass_text">Повторите пароль</string>
     <string name="next">Далее</string>
+    <string name="common_notes">Общие</string>
+    <string name="private_notes">Личные</string>
+    <string name="add_note">Добавить</string>
 </resources>

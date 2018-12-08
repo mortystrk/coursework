@@ -24,7 +24,7 @@ class AES {
      * @return The chunk of the scheduled key based on begin.
      */
 
-    private fun subKey(km: Array<IntArray>, begin: Int): Array<IntArray> {
+    fun subKey(km: Array<IntArray>, begin: Int): Array<IntArray> {
         val arr = Array(4) { IntArray(4) }
         for (i in arr.indices) {
             for (j in arr.indices) {

@@ -9,12 +9,65 @@
         tools:context=".core.MainActivity">
 
 
-    <android.support.v7.widget.RecyclerView
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/image_view"
+            android:src="@drawable/ic_launcher_background" android:layout_alignParentStart="true"
+            android:layout_marginStart="50dp" android:layout_alignParentTop="true" android:layout_marginTop="15dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/image_view2"
+            android:src="@drawable/ic_launcher_background" android:layout_alignParentStart="true"
+            android:layout_marginStart="130dp" android:layout_alignParentTop="true" android:layout_marginTop="15dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/image_view3"
+            android:src="@drawable/ic_launcher_background" android:layout_alignParentStart="true"
+            android:layout_marginStart="210dp" android:layout_alignParentTop="true" android:layout_marginTop="15dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/image_view4"
+            android:src="@drawable/ic_launcher_background" android:layout_alignParentStart="true"
+            android:layout_marginStart="290dp" android:layout_alignParentTop="true" android:layout_marginTop="15dp"/>
+    <android.support.constraint.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/horizontal_recycler_view"
-            android:orientation="horizontal">
+            android:layout_height="438dp" android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true" android:layout_marginStart="0dp">
 
-    </android.support.v7.widget.RecyclerView>
+        <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+        <android.support.design.widget.BottomNavigationView
+                android:id="@+id/navigationView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:background="?android:attr/windowBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:itemBackground="@color/colorPrimary"
+                app:itemIconTint="@drawable/bottom_navigation_color"
+                app:itemTextColor="@drawable/bottom_navigation_color"
+                app:menu="@menu/bottom_bar_menu"/>
+
+    </android.support.constraint.ConstraintLayout>
 </RelativeLayout>
