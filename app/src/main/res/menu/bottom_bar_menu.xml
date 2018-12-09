@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/navigation_songs"
+            android:id="@+id/navigation_common"
             android:icon="@drawable/baseline_note_black_48"
             android:title="@string/common_notes"/>
 
     <item
-            android:id="@+id/navigation_albums"
+            android:id="@+id/navigation_private"
             android:icon="@drawable/baseline_lock_black_48"
             android:title="@string/private_notes"/>
 
     <item
-            android:id="@+id/navigation_artists"
+            android:id="@+id/navigation_create"
             android:icon="@drawable/baseline_note_add_black_48"
             android:title="@string/add_note"/>
 

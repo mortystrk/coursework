@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#eeeaec</color>
+    <color name="colorPrimary">#FFFFD89D</color>
+    <color name="colorPrimaryDark">#ffae82</color>
+    <color name="colorAccent">#f59b67</color>
+    <color name="colorWork">#cf9b8b</color>
+    <color name="colorEducation">#796e86</color>
+    <color name="colorPet">#aa8bac</color>
+    <color name="colorHobby">#96a18e</color>
+    <color name="colorHome">#878aa3</color>
+    <color name="colorTextSelected">#ff4a36</color>
+    <color name="colorTextNonSelected">#000000</color>
 </resources>
