@@ -1,8 +1,8 @@
 package mrtsk.by.mynotes.core.fragments
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -12,9 +12,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.fragment_common_notes.view.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 import mrtsk.by.mynotes.R
+import mrtsk.by.mynotes.R.id.rv_common_notes
 import mrtsk.by.mynotes.core.model.Notes
 import mrtsk.by.mynotes.database.entities.Note
 
@@ -39,8 +40,7 @@ class CommonNotes : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private var isEmptyDataSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,18 +56,55 @@ class CommonNotes : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        val view = inflater.inflate(R.layout.fragment_common_notes, container, false)
-        recyclerView = view.rv_common_notes as RecyclerView
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
-        recyclerView.adapter = CommonNotesAdapter(Notes.notes!!.reversed() as ArrayList<Note>, this.context!!)
+        var view: View
+        return if (Notes.notes != null) {
+            view = inflater.inflate(R.layout.fragment_common_notes, container, false)
+            recyclerView = view.findViewById(R.id.rv_common_notes)
+            recyclerView.setHasFixedSize(true)
+            recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
 
-        return view
+            val view = if (Notes.notes!!.size == 1) {
+                val adapter = CommonNotesAdapter(Notes.notes!!, this.context!!)
+                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+                view
+            } else {
+                val adapter = CommonNotesAdapter(Notes.notes!!.reversed() as ArrayList<Note>, this.context!!)
+                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+                view
+            }
+            view
+        } else {
+            isEmptyDataSet = true
+            view = inflater.inflate(R.layout.empty_fragment, container, false)
+            view
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (isEmptyDataSet)
+        onDataSetIsEmpty()
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onDeletePressed(note: Note, position: Int) {
-        listener?.onDeleteItem(note, position)
+    private fun onDataSetIsEmpty() {
+        listener?.onDataSetIsEmpty()
+    }
+
+    private fun onItemClick(position: Int) {
+        listener?.onItemClick(position)
     }
 
     override fun onAttach(context: Context) {
@@ -97,7 +134,8 @@ class CommonNotes : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onDeleteItem(note: Note, position: Int)
+        fun onDataSetIsEmpty()
+        fun onItemClick(position: Int)
     }
 
     companion object {
@@ -120,12 +158,13 @@ class CommonNotes : Fragment() {
             }
     }
 
-    fun invalidate() {
-        recyclerView.adapter?.notifyDataSetChanged()
-    }
 
-    inner class CommonNotesAdapter(private var notes : ArrayList<Note>, val context: Context):
+    class CommonNotesAdapter(private var notes : ArrayList<Note>, val context: Context):
         RecyclerView.Adapter<CommonNotesAdapter.ContentViewHolder>() {
+
+        companion object {
+            lateinit var clickListener: ClickListener
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ContentViewHolder {
             val view = LayoutInflater.from(context).inflate(R.layout.content_item, parent, false)
@@ -140,35 +179,35 @@ class CommonNotes : Fragment() {
 
             when (notes[position].category) {
                 "Work" -> {
-                    holder.category_image.background = resources.getDrawable(R.drawable.rounded_corner_work_category, null)
+                    holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_work_category, null)
                     Glide.with(context)
                         .asBitmap()
                         .load(R.drawable.baseline_work_white_48)
                         .into(holder.category_image)
                 }
                 "Education" -> {
-                    holder.category_image.background = resources.getDrawable(R.drawable.rounded_corner_edu_category, null)
+                    holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_edu_category, null)
                     Glide.with(context)
                         .asBitmap()
                         .load(R.drawable.baseline_school_white_48)
                         .into(holder.category_image)
                 }
                 "Home" -> {
-                    holder.category_image.background = resources.getDrawable(R.drawable.rounded_corner_home_category, null)
+                    holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_home_category, null)
                     Glide.with(context)
                         .asBitmap()
                         .load(R.drawable.baseline_home_white_48)
                         .into(holder.category_image)
                 }
                 "Hobby" -> {
-                    holder.category_image.background = resources.getDrawable(R.drawable.rounded_corner_hobby_category, null)
+                    holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_hobby_category, null)
                     Glide.with(context)
                         .asBitmap()
                         .load(R.drawable.baseline_palette_white_48)
                         .into(holder.category_image)
                 }
                 "Pet" -> {
-                    holder.category_image.background = resources.getDrawable(R.drawable.rounded_corner_pet_category, null)
+                    holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_pet_category, null)
                     Glide.with(context)
                         .asBitmap()
                         .load(R.drawable.baseline_pets_white_48)
@@ -192,16 +231,31 @@ class CommonNotes : Fragment() {
         }
 
 
-        inner class ContentViewHolder (itemView:View) : RecyclerView.ViewHolder(itemView) {
+        class ContentViewHolder (itemView:View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
+            init {
+                itemView.setOnClickListener(this)
+            }
+
             internal var date_text: TextView = itemView.findViewById(R.id.tv_date) as TextView
             internal var title: TextView = itemView.findViewById(R.id.tv_title) as TextView
             internal var category_image: ImageView = itemView.findViewById(R.id.iv_category) as ImageView
-            //internal var edit_image: ImageView = itemView.findViewById(R.id.iv_edit) as ImageView
-            //internal var delete_image: ImageView = itemView.findViewById(R.id.iv_delete) as ImageView
             internal  var text: TextView = itemView.findViewById(R.id.tv_item_text) as TextView
+
+            override fun onClick(v: View?) {
+                clickListener.onItemClick(adapterPosition, v!!)
+            }
         }
 
-        fun replaceDate(date: String) : String {
+        interface ClickListener {
+            fun onItemClick(position: Int, view: View)
+        }
+
+        fun setOnItemClickListener(clickListener: ClickListener) {
+            CommonNotesAdapter.clickListener = clickListener
+        }
+
+        private fun replaceDate(date: String) : String {
             val month = date.substring(3, 5)
 
             val monthInWord = when (month) {

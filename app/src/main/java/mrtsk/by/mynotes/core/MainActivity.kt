@@ -2,6 +2,8 @@ package mrtsk.by.mynotes.core
 
 import android.annotation.SuppressLint
 import android.arch.persistence.room.Room
+import android.content.Intent
+import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -25,10 +27,14 @@ import java.time.LocalDateTime
 import java.util.*
 
 class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, CommonNotes.OnFragmentInteractionListener {
-    override fun onDeleteItem(note: Note, position: Int) {
-        Notes.notes?.removeAt(position)
-        db.noteDao().deleteNote(note)
-        Snackbar.make(main_layout, "Заметка удалена", Snackbar.LENGTH_SHORT).show()
+    override fun onItemClick(position: Int) {
+        val intent = Intent(this@MainActivity, NoteDetails::class.java)
+        intent.putExtra("position", position)
+        startActivity(intent)
+    }
+
+    override fun onDataSetIsEmpty() {
+        Snackbar.make(main_layout, "Заметок пока нет. Добавьте их, и они буду отображаться здесь", Snackbar.LENGTH_LONG).show()
     }
 
     override fun onCreateNote(note: Note?, flag: Boolean) {
@@ -79,7 +85,10 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
             AppDatabase::class.java, "UserGuard"
         ).allowMainThreadQueries().build()
 
-        Notes.notes = db.noteDao().loadAllUsers() as ArrayList<Note>
+        val selectedNotes = db.noteDao().loadAllUsers()
+        if (!selectedNotes.isEmpty()) {
+            Notes.notes = selectedNotes as ArrayList<Note>
+        }
 
         val commonNotes = CommonNotes.newInstance("", "")
         openFragment(commonNotes)
