@@ -177,12 +177,18 @@ class CommonNotes : Fragment() {
             }
 
             holder.title.text = notes[position].title
-            holder.date_text.text = notes[position].date
+            holder.date_text.text = replaceDate(notes[position].date!!)
 
-            holder.delete_image.setOnClickListener {
-                onDeletePressed(notes[position], position)
-                invalidate()
+            if (notes[position].text!!.length < 21) {
+                holder.text.text = notes[position].text
+            } else {
+                holder.text.text = "${notes[position].text!!.substring(0, 21)}..."
             }
+
+            //holder.delete_image.setOnClickListener {
+           //     onDeletePressed(notes[position], position)
+           //     invalidate()
+          //  }
         }
 
 
@@ -190,11 +196,33 @@ class CommonNotes : Fragment() {
             internal var date_text: TextView = itemView.findViewById(R.id.tv_date) as TextView
             internal var title: TextView = itemView.findViewById(R.id.tv_title) as TextView
             internal var category_image: ImageView = itemView.findViewById(R.id.iv_category) as ImageView
-            internal var edit_image: ImageView = itemView.findViewById(R.id.iv_edit) as ImageView
-            internal var delete_image: ImageView = itemView.findViewById(R.id.iv_delete) as ImageView
-
+            //internal var edit_image: ImageView = itemView.findViewById(R.id.iv_edit) as ImageView
+            //internal var delete_image: ImageView = itemView.findViewById(R.id.iv_delete) as ImageView
+            internal  var text: TextView = itemView.findViewById(R.id.tv_item_text) as TextView
         }
 
+        fun replaceDate(date: String) : String {
+            val month = date.substring(3, 5)
 
+            val monthInWord = when (month) {
+                "01" -> "Января"
+                "02" -> "Февраля"
+                "03" -> "Марта"
+                "04" -> "Апреля"
+                "05" -> "Мая"
+                "06" -> "Июня"
+                "07" -> "Июля"
+                "08" -> "Августа"
+                "09" -> "Сентября"
+                "10" -> "Октября"
+                "11" -> "Ноября"
+                "12" -> "Декабря"
+                else -> "Что?"
+            }
+
+            val day = date.substring(0, 2)
+
+            return "$day $monthInWord"
+        }
     }
 }
