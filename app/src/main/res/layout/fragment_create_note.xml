@@ -99,5 +99,19 @@
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
             android:layout_marginStart="11dp" android:layout_alignParentBottom="true" android:id="@+id/tv_work_categ"
             android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+    <ImageView
+            android:src="@drawable/baseline_lock_black_48"
+            android:layout_width="40dp"
+            android:layout_height="40dp" android:layout_alignParentStart="true"
+            android:layout_marginStart="11dp" android:layout_alignTop="@+id/b_done" android:id="@+id/iv_make_private"
+            android:layout_marginTop="0dp" android:clickable="true"/>
+    <TextView
+            android:text="Сделать приватной"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/iv_make_private" android:layout_marginStart="52dp"
+            android:id="@+id/tv_make_private"
+            android:fontFamily="sans-serif" android:textSize="12sp" android:textColor="@color/colorTextNonSelected"
+            android:layout_marginBottom="0dp" android:clickable="true" android:editable="true" android:enabled="true"/>
 
 </RelativeLayout>

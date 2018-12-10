@@ -43,6 +43,7 @@ class CreateNote : Fragment() {
     private var previousImageView: ImageView? = null
     private var previousTextView: TextView? = null
     private var category: String = ""
+    private var isPrivate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +81,7 @@ class CreateNote : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         b_done.setOnClickListener { onButtonPressed() }
+
         iv_add_work_category.setOnClickListener { changeSelectedView(it as ImageView, tv_work_categ)
         category = "Work"}
         iv_add_edu_category.setOnClickListener { changeSelectedView(it as ImageView, tv_edu_categ)
@@ -90,6 +92,30 @@ class CreateNote : Fragment() {
         category = "Home"}
         iv_add_pet_category.setOnClickListener { changeSelectedView(it as ImageView, tv_pet_categ)
         category = "Pet"}
+
+        /*tv_make_private.setOnClickListener {
+            if (!isPrivate) {
+                iv_make_private.translationZ = 25.0f
+                it.translationZ = 25.0f
+                isPrivate = true
+            } else {
+                iv_make_private.translationZ = 0.0f
+                it.translationZ = 0.0f
+                isPrivate = false
+            }
+        }*/
+
+        iv_make_private.setOnClickListener {
+            if (!isPrivate) {
+                tv_make_private.translationZ = 25.0f
+                it.translationZ = 25.0f
+                isPrivate = true
+            } else {
+                tv_make_private.translationZ = 0.0f
+                it.translationZ = 0.0f
+                isPrivate = false
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -140,12 +166,6 @@ class CreateNote : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    private fun init() {
-        b_done.setOnClickListener {
-           Snackbar.make(activity!!.main_layout, "Готово", Snackbar.LENGTH_SHORT).show()
-        }
     }
 
     private fun changeSelectedView(currImageView: ImageView, currTextView: TextView) {
