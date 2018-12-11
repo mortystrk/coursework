@@ -6,12 +6,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.text.TextUtils
+import android.util.Base64
 import android.view.View
 import kotlinx.android.synthetic.main.activity_welcome.*
 import mrtsk.by.mynotes.R
 import mrtsk.by.mynotes.core.preferences.PreferencesHelper
+import mrtsk.by.mynotes.crypt.AESEncryptor
 import mrtsk.by.mynotes.database.database.AppDatabase
 import mrtsk.by.mynotes.database.entities.Guard
+import mrtsk.by.mynotes.utils.random
+import java.util.*
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -75,12 +79,23 @@ class WelcomeActivity : AppCompatActivity() {
             focusView?.requestFocus()
         } else {
             //позже тут будет шифрование
+            val r = random(20)
+            preferences.setR(r)
+
+            val s = Base64.encodeToString((password + r).toByteArray(), Base64.DEFAULT)
+            preferences.setS(s)
+
+
+            val e = AESEncryptor()
+            e.init((password + r).toByteArray())
+            val rp = e.encrypt(password)
+
             val db = Room.databaseBuilder(
                 applicationContext,
                 AppDatabase::class.java, "UserGuard"
             ).allowMainThreadQueries().build()
 
-            db.userDao().insertGuard(Guard(0, password))
+            db.userDao().insertGuard(Guard(0, rp))
 
             preferences.setFirstEntry(false)
 

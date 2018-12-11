@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 import android.util.Base64
+import mrtsk.by.mynotes.core.preferences.PreferencesHelper
 import mrtsk.by.mynotes.utils.random
 import org.bouncycastle.crypto.InvalidCipherTextException
 
@@ -80,12 +81,15 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
     lateinit var commonNotesFragment: CommonNotes
     private var isDelete = false
     private var isSaved = false
+    private lateinit var preferences: PreferencesHelper
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        preferences = PreferencesHelper(this)
 
         db = Room.databaseBuilder(
             applicationContext,
@@ -111,42 +115,6 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
         toolbar = supportActionBar!!
         val bottomNavigation: BottomNavigationView = findViewById(R.id.navigationView)
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
-        val point = ECParams.g.multiply(BigInteger.TEN)
-        val point2 = ECParams.g.multiply(BigInteger.TEN)
-
-        val array = point.encoded
-
-
-        val s = "123356"
-        val ss = "123356"
-        val r = random(20)
-
-        val rs = s + r
-        val rss = ss + r
-
-        val ba = rs.toByteArray()
-        val ba2 = rss.toByteArray()
-
-        val str = Base64.encodeToString(ba, Base64.DEFAULT)
-        val decodedString = Base64.decode(str, Base64.DEFAULT)
-
-        val e1 = AESEncryptor()
-        val e2 = AESEncryptor()
-        e1.init(decodedString)
-        e2.init(ba2)
-        val t1 = "TEST"
-        val en1 = e1.encrypt("TEST")
-        val en2 = e2.encrypt("TEST")
-        try {
-            e2.decrypt(en1)
-            Snackbar.make(main_layout, "OK", Snackbar.LENGTH_SHORT).show()
-        } catch (e: InvalidCipherTextException) {
-            Snackbar.make(main_layout, "NOT OK", Snackbar.LENGTH_SHORT).show()
-        }
-
-        //Snackbar.make(main_layout, array.size.toString(), Snackbar.LENGTH_SHORT).show()
-        //Snackbar.make(main_layout, e2.decrypt(e1.encrypt(t1)), Snackbar.LENGTH_SHORT).show()
     }
 
     private fun openFragment(fragment: Fragment) {
@@ -155,5 +123,23 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    private fun checkPassword(pass: String) : Boolean {
+        val guardList = db.userDao().getGuard()
+
+        val r = preferences.getR()
+
+        val rs = pass + r
+        val ba = rs.toByteArray()
+
+        val e = AESEncryptor()
+        e.init(ba)
+        return  try {
+            e.decrypt(guardList[0].guard!!)
+            true
+        } catch (e: InvalidCipherTextException) {
+            false
+        }
     }
 }
