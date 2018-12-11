@@ -12,11 +12,14 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
 import android.util.Base64
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import mrtsk.by.mynotes.R
 import mrtsk.by.mynotes.core.fragments.CommonNotes
 import mrtsk.by.mynotes.core.fragments.CreateNote
+import mrtsk.by.mynotes.core.fragments.PasswordDialog
 import mrtsk.by.mynotes.core.fragments.PrivateNotes
 import mrtsk.by.mynotes.core.model.Notes
 import mrtsk.by.mynotes.crypt.AESEncryptor
@@ -27,29 +30,46 @@ import mrtsk.by.mynotes.core.preferences.PreferencesHelper
 import mrtsk.by.mynotes.database.entities.PNote
 import org.bouncycastle.crypto.InvalidCipherTextException
 import kotlin.collections.ArrayList
+import android.widget.TextView
 
-class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, CommonNotes.OnFragmentInteractionListener, PrivateNotes.OnPrivateNotesFragmentListener {
+
+
+class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, CommonNotes.OnFragmentInteractionListener, PrivateNotes.OnPrivateNotesFragmentListener, PasswordDialog.PasswordListener {
+    override fun onPositiveClick(password: String) {
+        if (checkPassword(password)) {
+            dialog.dismiss()
+            val intent = Intent(this@MainActivity, NoteDetails::class.java)
+            intent.putExtra("position", privateNotePosition)
+            intent.putExtra("private", true)
+            startActivity(intent)
+        } else {
+            dialog.dismiss()
+            Snackbar.make(main_layout, "Пароль неверный", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onFABPressed() {
         val intent = Intent(this@MainActivity, CreatePrivateNote::class.java)
         startActivity(intent)
     }
 
     override fun onDataSetIsEmptyPrivateNotes() {
-        Snackbar.make(main_layout, "Заметок пока нет. Добавьте их, и они буду отображаться здесь", Snackbar.LENGTH_SHORT).show()
+        //Snackbar.make(main_layout, "Заметок пока нет. Добавьте их, и они буду отображаться здесь", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onItemClickPrivateNotes(position: Int) {
-        val intent = Intent(this@MainActivity, NoteDetails::class.java)
-        intent.putExtra("position", position)
-        intent.putExtra("private", true)
-        startActivity(intent)
+        numberOfBackTap = 0
+        privateNotePosition = position
+        dialog = PasswordDialog()
+        dialog.show(supportFragmentManager, "PasswordDialog")
     }
 
     override fun onDataSetIsEmpty() {
-        Snackbar.make(main_layout, "Заметок пока нет. Добавьте их, и они буду отображаться здесь", Snackbar.LENGTH_SHORT).show()
+        //Snackbar.make(main_layout, "Заметок пока нет. Добавьте их, и они буду отображаться здесь", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onItemClick(position: Int) {
+        numberOfBackTap = 0
         val intent = Intent(this@MainActivity, NoteDetails::class.java)
         intent.putExtra("position", position)
         startActivity(intent)
@@ -70,16 +90,19 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_common -> {
+                targetFragment = "CommonNotes"
                 commonNotesFragment = CommonNotes.newInstance("", "")
                 openFragment(commonNotesFragment, true)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_private -> {
+                targetFragment = "PrivateNotes"
                 privateNotesFragment = PrivateNotes.newInstance("", "")
                 openFragment(privateNotesFragment, true)
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_create -> {
+                targetFragment = "CreateNote"
                 val createNote = CreateNote.newInstance("", "")
                 openFragment(createNote, true)
                 return@OnNavigationItemSelectedListener true
@@ -94,6 +117,10 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
     lateinit var privateNotesFragment: PrivateNotes
     private var isSaved = false
     private lateinit var preferences: PreferencesHelper
+    private lateinit var dialog: PasswordDialog
+    private var privateNotePosition = -1
+    private var numberOfBackTap = 0
+    private lateinit var targetFragment: String
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SimpleDateFormat")
@@ -111,39 +138,46 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
         toolbar = supportActionBar!!
         val bottomNavigation: BottomNavigationView = findViewById(R.id.navigationView)
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        targetFragment = "CommonNotes"
     }
 
     override fun onResume() {
         super.onResume()
 
-        Notes.notes.clear()
-        Notes.notes = db.noteDao().loadAllUsers() as ArrayList<Note>
+        when {
+            Const.isCreatedPrivateNote -> {
+                Const.isCreatedPrivateNote = false
 
-        Notes.pNotes = db.pnoteDao().loadAllPNotes() as ArrayList<PNote>
-        /*val pnote = Notes.pNotes[0]
-
-        val s = Base64.decode(preferences.getS(), Base64.DEFAULT)
-        val e = AESEncryptor()
-        e.init(s)
-
-        try {
-            val title = e.decrypt(pnote.title!!)
-            val text = e.decrypt(pnote.text!!)
-
-            Snackbar.make(main_layout, "$title $text", Snackbar.LENGTH_SHORT).show()
-        } catch (e: InvalidCipherTextException) {
-            Snackbar.make(main_layout, "Error", Snackbar.LENGTH_SHORT).show()
-        }*/
-        val commonNotes = CommonNotes.newInstance("", "")
-
-        if (!Const.isDelete && !isSaved) {
-            openFragment(commonNotes, true)
-        } else {
-            openFragment(commonNotes, false)
+                privateNotesFragment = PrivateNotes.newInstance("", "")
+                openFragment(privateNotesFragment, false)
+            }
+            Const.isChangeddPrivateNote -> {
+                Const.isChangeddPrivateNote = false
+                privateNotesFragment = PrivateNotes.newInstance("", "")
+                openFragment(privateNotesFragment, false)
+            }
+            Const.isDelete -> {
+                Const.isDelete = false
+                commonNotesFragment = CommonNotes.newInstance("", "")
+                openFragment(commonNotesFragment, false)
+            }
+            Const.isChangedNote -> {
+                Const.isChangedNote = false
+                commonNotesFragment = CommonNotes.newInstance("", "")
+                openFragment(commonNotesFragment, false)
+            }
+            else -> {
+                Notes.notes = db.noteDao().loadAllUsers() as ArrayList<Note>
+                Notes.pNotes = db.pnoteDao().loadAllPNotes() as ArrayList<PNote>
+                commonNotesFragment = CommonNotes.newInstance("", "")
+                openFragment(commonNotesFragment, false)
+            }
         }
     }
 
     private fun openFragment(fragment: Fragment, animation: Boolean) {
+        numberOfBackTap = 0
         val transaction = supportFragmentManager.beginTransaction()
         if (animation) {
             transaction.setCustomAnimations(R.animator.create_note_fragment_show, R.animator.create_note_fragment_hide)
@@ -168,6 +202,46 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
             true
         } catch (e: InvalidCipherTextException) {
             false
+        }
+    }
+
+    private fun sort() {
+        if (Notes.notes.size != 0) {
+            val sortedList = Notes.notes.sortedWith(compareBy { it.category })
+            Notes.notes.clear()
+            for (item in sortedList) {
+                Notes.notes.add(item)
+            }
+            commonNotesFragment = CommonNotes.newInstance("","")
+            openFragment(commonNotesFragment, false)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        return when (id) {
+            R.id.sort -> {
+                if (targetFragment == "CommonNotes") {
+                    sort()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onBackPressed() {
+        numberOfBackTap++
+        if (numberOfBackTap == 2) {
+            finish()
+        } else {
+            Snackbar.make(main_layout, "Нажмите еще раз, чтобы выйти из приложения", Snackbar.LENGTH_SHORT).show()
         }
     }
 }

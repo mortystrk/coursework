@@ -63,10 +63,12 @@ class CreatePrivateNote : AppCompatActivity() {
             db.pnoteDao().insertPNote(pnote)
             Notes.pNotes.add(pnote)
 
+            preferences.setPID(id)
+
             Snackbar.make(create_pnote_layout, "Заметка сохранена", Snackbar.LENGTH_INDEFINITE).setAction("Хорошо") {
                 Const.isCreatedPrivateNote = true
                 onBackPressed()
-            }
+            }.show()
         }
     }
 }

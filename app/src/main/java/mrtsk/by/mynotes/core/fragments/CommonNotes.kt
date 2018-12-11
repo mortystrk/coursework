@@ -137,7 +137,6 @@ class CommonNotes : Fragment() {
             }
     }
 
-
     class CommonNotesAdapter(private var notes : ArrayList<Note>, val context: Context):
         RecyclerView.Adapter<CommonNotesAdapter.ContentViewHolder>() {
 

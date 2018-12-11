@@ -165,7 +165,6 @@ class PrivateNotes : Fragment() {
                     return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_fragment, parent, false))
                 }
             }
-            //return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
         }
 
         override fun getItemCount(): Int {
@@ -173,10 +172,10 @@ class PrivateNotes : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
-            holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_lock_category, null)
+            holder.category_image.background = context.resources.getDrawable(R.drawable.b_rounded_corner, null)
             Glide.with(context)
                 .asBitmap()
-                .load(R.drawable.baseline_lock_white_48dp)
+                .load(R.drawable.baseline_lock_black_48)
                 .into(holder.category_image)
 
             if (notes[position].title!!.length < 21) {

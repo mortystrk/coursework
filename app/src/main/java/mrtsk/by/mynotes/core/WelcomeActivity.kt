@@ -10,12 +10,15 @@ import android.util.Base64
 import android.view.View
 import kotlinx.android.synthetic.main.activity_welcome.*
 import mrtsk.by.mynotes.R
+import mrtsk.by.mynotes.core.model.Notes
 import mrtsk.by.mynotes.core.preferences.PreferencesHelper
 import mrtsk.by.mynotes.crypt.AESEncryptor
 import mrtsk.by.mynotes.database.database.AppDatabase
 import mrtsk.by.mynotes.database.entities.Guard
+import mrtsk.by.mynotes.database.entities.Note
 import mrtsk.by.mynotes.utils.random
 import java.util.*
+import kotlin.collections.ArrayList
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -29,6 +32,7 @@ class WelcomeActivity : AppCompatActivity() {
         if (!preferences.isFirstEntry()){
             val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         b_start.setOnClickListener { getPasswordAndNextActivity() }
@@ -106,6 +110,7 @@ class WelcomeActivity : AppCompatActivity() {
                     preferences.setPID(0)
                     val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }
             snackbar.show()
         }
