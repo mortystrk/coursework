@@ -3,6 +3,7 @@ package mrtsk.by.mynotes.core
 import android.annotation.SuppressLint
 import android.arch.persistence.room.Room
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.os.Build
@@ -19,12 +20,18 @@ import mrtsk.by.mynotes.R
 import mrtsk.by.mynotes.core.fragments.CommonNotes
 import mrtsk.by.mynotes.core.fragments.CreateNote
 import mrtsk.by.mynotes.core.model.Notes
+import mrtsk.by.mynotes.crypt.AESEncryptor
+import mrtsk.by.mynotes.crypt.ECParams
 import mrtsk.by.mynotes.database.database.AppDatabase
 import mrtsk.by.mynotes.database.entities.Note
+import java.math.BigInteger
 import java.time.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
+import android.util.Base64
+import mrtsk.by.mynotes.utils.random
+import org.bouncycastle.crypto.InvalidCipherTextException
 
 class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, CommonNotes.OnFragmentInteractionListener {
     override fun onItemClick(position: Int) {
@@ -69,10 +76,10 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
     }
 
     lateinit var toolbar: ActionBar
-    lateinit var currentDate: String
     lateinit var db: AppDatabase
     lateinit var commonNotesFragment: CommonNotes
-
+    private var isDelete = false
+    private var isSaved = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SimpleDateFormat")
@@ -85,9 +92,17 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
             AppDatabase::class.java, "UserGuard"
         ).allowMainThreadQueries().build()
 
-        val selectedNotes = db.noteDao().loadAllUsers()
-        if (!selectedNotes.isEmpty()) {
-            Notes.notes = selectedNotes as ArrayList<Note>
+
+        if (intent.extras != null) {
+            isDelete = intent.extras.getBoolean("deleted", false)
+            isSaved = intent.extras.getBoolean("saved", false)
+        }
+
+        if (!isDelete && !isSaved) {
+            val selectedNotes = db.noteDao().loadAllUsers()
+            if (!selectedNotes.isEmpty()) {
+                Notes.notes = selectedNotes as ArrayList<Note>
+            }
         }
 
         val commonNotes = CommonNotes.newInstance("", "")
@@ -97,23 +112,41 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
         val bottomNavigation: BottomNavigationView = findViewById(R.id.navigationView)
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val point = ECParams.g.multiply(BigInteger.TEN)
+        val point2 = ECParams.g.multiply(BigInteger.TEN)
 
-        //val commonNotes = CommonNotes.newInstance("", "")
-        //openFragment(commonNotes)
+        val array = point.encoded
 
 
-        val dateTimeStrToLocalDateTime: (String) -> LocalDateTime = {
-            LocalDateTime.parse(it, DateTimeFormatter.ofPattern("dd/M/yyyy hh:mm:ss"))
+        val s = "123356"
+        val ss = "123356"
+        val r = random(20)
+
+        val rs = s + r
+        val rss = ss + r
+
+        val ba = rs.toByteArray()
+        val ba2 = rss.toByteArray()
+
+        val str = Base64.encodeToString(ba, Base64.DEFAULT)
+        val decodedString = Base64.decode(str, Base64.DEFAULT)
+
+        val e1 = AESEncryptor()
+        val e2 = AESEncryptor()
+        e1.init(decodedString)
+        e2.init(ba2)
+        val t1 = "TEST"
+        val en1 = e1.encrypt("TEST")
+        val en2 = e2.encrypt("TEST")
+        try {
+            e2.decrypt(en1)
+            Snackbar.make(main_layout, "OK", Snackbar.LENGTH_SHORT).show()
+        } catch (e: InvalidCipherTextException) {
+            Snackbar.make(main_layout, "NOT OK", Snackbar.LENGTH_SHORT).show()
         }
 
-
-
-        currentDate = sdf.format(Date())
-      //  val snackbar = Snackbar
-        //    .make(main_layout, "Текущая дата: $currentDate", Snackbar.LENGTH_INDEFINITE)
-       // snackbar.show()
-
+        //Snackbar.make(main_layout, array.size.toString(), Snackbar.LENGTH_SHORT).show()
+        //Snackbar.make(main_layout, e2.decrypt(e1.encrypt(t1)), Snackbar.LENGTH_SHORT).show()
     }
 
     private fun openFragment(fragment: Fragment) {
@@ -122,12 +155,5 @@ class MainActivity : AppCompatActivity(), CreateNote.OnCreateNoteListener, Commo
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
-    }
-
-    class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            handler()
-            return null
-        }
     }
 }

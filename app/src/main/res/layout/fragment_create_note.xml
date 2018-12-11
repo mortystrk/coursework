@@ -9,102 +9,117 @@
             android:text="Питомец"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
-            android:layout_marginStart="303dp" android:layout_alignParentBottom="true" android:id="@+id/tv_pet_categ"
-            android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+            android:layout_marginStart="302dp" android:layout_alignParentBottom="true" android:id="@+id/tv_pet_categ"
+            android:layout_marginBottom="140dp" android:textColor="@android:color/black" android:textSize="12sp"/>
     <TextView
             android:text="Хобби"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
-            android:layout_marginStart="243dp" android:layout_alignParentBottom="true" android:id="@+id/tv_hobby_categ"
-            android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+            android:layout_marginStart="236dp" android:layout_alignParentBottom="true" android:id="@+id/tv_hobby_categ"
+            android:layout_marginBottom="140dp" android:textColor="@android:color/black" android:textSize="12sp"/>
     <TextView
             android:text="Дом"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
-            android:layout_marginStart="172dp" android:layout_alignParentBottom="true" android:id="@+id/tv_home_categ"
-            android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+            android:layout_marginStart="167dp" android:layout_alignParentBottom="true" android:id="@+id/tv_home_categ"
+            android:layout_marginBottom="140dp" android:textColor="@android:color/black" android:textSize="12sp"/>
     <TextView
             android:text="Образование"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
             android:layout_marginStart="70dp" android:layout_alignParentBottom="true" android:id="@+id/tv_edu_categ"
-            android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+            android:layout_marginBottom="140dp" android:textColor="@android:color/black" android:textSize="12sp"/>
     <ImageView
             android:src="@drawable/baseline_pets_white_48"
             android:layout_width="40dp"
             android:layout_height="40dp" android:layout_alignParentBottom="true" android:id="@+id/iv_add_pet_category"
-            android:layout_marginBottom="170dp"
-            android:layout_marginStart="30dp" android:background="@drawable/rounded_corner_pet_category"
+            android:layout_marginBottom="160dp"
+            android:layout_marginStart="34dp" android:background="@drawable/rounded_corner_pet_category"
             android:layout_toEndOf="@+id/iv_add_hobby_category"/>
     <ImageView
             android:src="@drawable/baseline_palette_white_48"
             android:layout_width="40dp"
             android:layout_height="40dp" android:layout_alignParentBottom="true" android:id="@+id/iv_add_hobby_category"
-            android:layout_alignStart="@+id/et_add_title" android:layout_marginBottom="170dp"
-            android:layout_marginStart="220dp" android:background="@drawable/rounded_corner_hobby_category"/>
+            android:layout_marginBottom="160dp"
+            android:layout_marginStart="34dp" android:background="@drawable/rounded_corner_hobby_category"
+            android:layout_toEndOf="@+id/iv_add_home_category"/>
     <ImageView
             android:src="@drawable/baseline_home_white_48"
             android:layout_width="40dp"
             android:layout_height="40dp" android:layout_alignParentBottom="true" android:id="@+id/iv_add_home_category"
-            android:layout_alignStart="@+id/et_add_title" android:layout_marginBottom="170dp"
-            android:layout_marginStart="144dp" android:background="@drawable/rounded_corner_home_category"/>
+            android:layout_marginBottom="160dp"
+            android:layout_marginStart="34dp" android:background="@drawable/rounded_corner_home_category"
+            android:layout_toEndOf="@+id/iv_add_edu_category"/>
     <ImageView
             android:src="@drawable/baseline_school_white_48"
             android:layout_width="40dp"
             android:layout_height="40dp" android:layout_alignParentBottom="true" android:id="@+id/iv_add_edu_category"
-            android:layout_marginBottom="170dp"
-            android:layout_marginStart="32dp" android:background="@drawable/rounded_corner_edu_category"
+            android:layout_marginBottom="161dp"
+            android:layout_marginStart="34dp" android:background="@drawable/rounded_corner_edu_category"
             android:layout_toEndOf="@+id/iv_add_work_category"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:background="@android:color/transparent"
-            android:layout_alignParentStart="true" android:layout_marginStart="20dp"
-            android:layout_alignParentTop="true" android:id="@+id/et_add_title" android:layout_marginTop="42dp"
-            android:textSize="18sp" android:hint="Заголовок..."/>
+
+    <RelativeLayout android:layout_width="330dp" android:layout_height="253dp"
+                    android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+                    android:layout_marginTop="19dp"
+                    android:id="@+id/create_node_child_layout"
+                    android:background="@drawable/b_rounded_corner"
+                    android:translationZ="3dp">
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:background="@android:color/transparent"
+                android:layout_alignParentStart="true" android:layout_marginStart="12dp"
+                android:layout_alignParentTop="true" android:id="@+id/et_add_title" android:layout_marginTop="21dp"
+                android:textSize="18sp" android:hint="Заголовок..." android:inputType="text|textCapSentences"/>
+        <EditText
+                android:layout_width="310dp"
+                android:layout_height="wrap_content"
+                android:inputType="text|textCapSentences|textMultiLine"
+                android:ems="10"
+                android:background="@android:color/transparent"
+                android:id="@+id/et_note_text" android:layout_marginTop="17dp"
+                android:layout_alignStart="@+id/et_add_title" android:hint="Текст заметки..." android:textSize="16sp"
+                android:maxWidth="175dp" android:layout_below="@+id/et_add_title"/>
+    </RelativeLayout>
+
+
     <Button
             android:text="Готово"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_marginEnd="8dp"
-            android:layout_alignParentBottom="true" android:id="@+id/b_done" android:layout_marginBottom="77dp"
-            android:background="@drawable/b_rounded_corner"
-            android:textColor="@color/colorTextNonSelected" android:textAllCaps="false" android:textSize="16sp"/>
-    <EditText
-            android:layout_width="320dp"
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
-            android:inputType="text|textMultiLine"
-            android:ems="10"
-            android:background="@android:color/transparent"
-            android:layout_alignParentTop="true" android:id="@+id/et_note_text" android:layout_marginTop="84dp"
-            android:layout_alignStart="@+id/et_add_title" android:hint="Текст заметки..." android:textSize="16sp"
-            android:maxWidth="175dp"/>
+            android:layout_alignParentBottom="true" android:id="@+id/b_done" android:layout_marginBottom="78dp"
+            android:background="@drawable/b_rounded_corner"
+            android:translationZ="3dp"
+            android:textColor="@color/colorTextNonSelected" android:textAllCaps="false" android:textSize="16sp"
+            android:fontFamily="sans-serif" android:layout_alignEnd="@+id/create_node_child_layout"
+            android:layout_marginEnd="-1dp"/>
+
     <TextView
             android:text="Выберите категорию:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:id="@+id/tv_category"
-            android:layout_alignStart="@+id/et_add_title" android:layout_marginBottom="219dp"
-            android:layout_marginStart="0dp" android:textColor="@android:color/black"/>
+            android:layout_alignStart="@+id/create_node_child_layout" android:layout_marginBottom="210dp"
+            android:layout_marginStart="-6dp" android:textColor="@android:color/black"/>
     <ImageView
             android:src="@drawable/baseline_work_white_48"
             android:layout_width="40dp"
             android:background="@drawable/rounded_corner_work_category"
             android:layout_height="40dp" android:layout_alignParentBottom="true" android:id="@+id/iv_add_work_category"
-            android:layout_alignStart="@+id/et_add_title" android:layout_marginBottom="170dp"
-            android:layout_marginStart="-7dp"/>
+            android:layout_alignStart="@+id/create_node_child_layout" android:layout_marginBottom="160dp"
+            android:layout_marginStart="-4dp"/>
     <TextView
             android:text="Работа"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_alignParentStart="true"
             android:layout_marginStart="11dp" android:layout_alignParentBottom="true" android:id="@+id/tv_work_categ"
-            android:layout_marginBottom="146dp" android:textColor="@android:color/black" android:textSize="12sp"/>
+            android:layout_marginBottom="140dp" android:textColor="@android:color/black" android:textSize="12sp"/>
     <ImageView
             android:src="@drawable/baseline_lock_black_48"
             android:layout_width="40dp"
             android:layout_height="40dp" android:layout_alignParentStart="true"
             android:layout_marginStart="11dp" android:layout_alignTop="@+id/b_done" android:id="@+id/iv_make_private"
-            android:layout_marginTop="0dp" android:clickable="true"/>
+            android:layout_marginTop="0dp" android:clickable="true" android:visibility="invisible"/>
     <TextView
             android:text="Сделать приватной"
             android:layout_width="wrap_content"
@@ -112,6 +127,7 @@
             android:layout_alignBottom="@+id/iv_make_private" android:layout_marginStart="52dp"
             android:id="@+id/tv_make_private"
             android:fontFamily="sans-serif" android:textSize="12sp" android:textColor="@color/colorTextNonSelected"
-            android:layout_marginBottom="0dp" android:clickable="true" android:editable="true" android:enabled="true"/>
+            android:layout_marginBottom="0dp" android:clickable="true" android:editable="true" android:enabled="true"
+            android:visibility="invisible"/>
 
 </RelativeLayout>

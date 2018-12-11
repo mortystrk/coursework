@@ -50,4 +50,10 @@ dependencies {
 
     //circle imageview
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.45'
+
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12-b140109.1041'
+
+    implementation 'org.eclipse.birt.runtime.3_7_1:org.apache.xerces:2.9.0'
 }
