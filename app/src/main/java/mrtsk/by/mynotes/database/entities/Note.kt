@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity
 data class Note(
-    @PrimaryKey(autoGenerate = true) var ID: Int = 0,
+    @PrimaryKey(autoGenerate = true) var ID: Int,
     @ColumnInfo(name = "title") var title: String?,
     @ColumnInfo(name = "text") var text: String?,
     @ColumnInfo(name = "date") var date: String?,

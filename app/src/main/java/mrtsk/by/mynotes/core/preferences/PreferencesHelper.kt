@@ -8,6 +8,8 @@ class PreferencesHelper(context: Context) {
     private val FIRST_ENTRY = "FirstEntry"
     private val R = "R"
     private val S = "S"
+    private val ID = "ID"
+    private val PRIVATE_ID = "PrivateID"
 
     private val preference = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
@@ -39,5 +41,25 @@ class PreferencesHelper(context: Context) {
 
     fun getS() : String {
         return preference.getString(S, "error")
+    }
+
+    fun setID(id: Int) {
+        val editor = preference.edit()
+        editor.putInt(ID, id)
+        editor.apply()
+    }
+
+    fun getID() : Int {
+        return preference.getInt(ID, -1)
+    }
+
+    fun setPID(pid: Int) {
+        val editor = preference.edit()
+        editor.putInt(PRIVATE_ID, pid)
+        editor.apply()
+    }
+
+    fun getPID() : Int {
+        return preference.getInt(PRIVATE_ID, -1)
     }
 }

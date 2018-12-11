@@ -102,6 +102,8 @@ class WelcomeActivity : AppCompatActivity() {
             val snackbar = Snackbar
                 .make(welcome_screen, "Пароль сохранен!", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Хорошо") {
+                    preferences.setID(0)
+                    preferences.setPID(0)
                     val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
                     startActivity(intent)
                 }

@@ -56,40 +56,40 @@ class CommonNotes : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        var view: View
-        return if (Notes.notes != null) {
-            view = inflater.inflate(R.layout.fragment_common_notes, container, false)
-            recyclerView = view.findViewById(R.id.rv_common_notes)
-            recyclerView.setHasFixedSize(true)
-            recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
+        val view = inflater.inflate(R.layout.fragment_common_notes, container, false)
+        recyclerView = view.findViewById(R.id.rv_common_notes)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
 
-            val view = if (Notes.notes!!.size == 1) {
-                val adapter = CommonNotesAdapter(Notes.notes!!, this.context!!)
-                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
-                    override fun onItemClick(position: Int, view: View) {
-                        onItemClick(position)
-                    }
-                })
+        when {
+            Notes.notes.size == 0 -> {
+                val adapter = CommonNotesAdapter(Notes.notes, this.context!!)
                 recyclerView.adapter = adapter
-                isEmptyDataSet = false
-                view
-            } else {
-                val adapter = CommonNotesAdapter(Notes.notes!!.reversed() as ArrayList<Note>, this.context!!)
-                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
-                    override fun onItemClick(position: Int, view: View) {
-                        onItemClick(position)
-                    }
-                })
-                recyclerView.adapter = adapter
-                isEmptyDataSet = false
-                view
+                isEmptyDataSet = true
             }
-            view
-        } else {
-            isEmptyDataSet = true
-            view = inflater.inflate(R.layout.empty_fragment, container, false)
-            view
+            Notes.notes.size == 1 -> {
+                val adapter = CommonNotesAdapter(Notes.notes, this.context!!)
+                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+            }
+            else -> {
+                val adapter = CommonNotesAdapter(Notes.notes.reversed() as ArrayList<Note>, this.context!!)
+                adapter.setOnItemClickListener(object : CommonNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+            }
         }
+
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -121,33 +121,12 @@ class CommonNotes : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onDataSetIsEmpty()
         fun onItemClick(position: Int)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CommonNotes.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CommonNotes().apply {
@@ -164,11 +143,28 @@ class CommonNotes : Fragment() {
 
         companion object {
             lateinit var clickListener: ClickListener
+            private const val EMPTY_PLACEHOLDER = 0
+            private const val NORMAL_PLACEHOLDER = 1
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            return if (notes.size == 0) {
+                EMPTY_PLACEHOLDER
+            } else {
+                NORMAL_PLACEHOLDER
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ContentViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.content_item, parent, false)
-            return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
+            return when (p1) {
+                EMPTY_PLACEHOLDER -> ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_fragment, parent, false))
+                NORMAL_PLACEHOLDER -> ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
+                else -> {
+                    return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_fragment, parent, false))
+                }
+            }
+
+           // return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
         }
 
         override fun getItemCount(): Int {
@@ -223,11 +219,6 @@ class CommonNotes : Fragment() {
             } else {
                 holder.text.text = "${notes[position].text!!.substring(0, 21)}..."
             }
-
-            //holder.delete_image.setOnClickListener {
-           //     onDeletePressed(notes[position], position)
-           //     invalidate()
-          //  }
         }
 
 

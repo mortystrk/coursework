@@ -2,18 +2,16 @@ package mrtsk.by.mynotes.core.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_create_note.*
 import mrtsk.by.mynotes.R
+import mrtsk.by.mynotes.core.preferences.PreferencesHelper
 import mrtsk.by.mynotes.database.entities.Note
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +42,7 @@ class CreateNote : Fragment() {
     private var previousTextView: TextView? = null
     private var category: String = ""
     private var isPrivate = false
+    private lateinit var preferences: PreferencesHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +50,7 @@ class CreateNote : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        preferences = PreferencesHelper(this.context!!)
     }
 
     override fun onCreateView(
@@ -71,7 +71,9 @@ class CreateNote : Fragment() {
             val title = et_add_title.text.toString()
             val text = et_note_text.text.toString()
             val date = sdf.format(Date())
-            note = Note(0, title, text, date, category)
+            val ID = preferences.getID() + 1
+            note = Note(ID, title, text, date, category)
+            preferences.setID(ID)
             flag = true
         }
         listener?.onCreateNote(note, flag)

@@ -6,7 +6,7 @@ import mrtsk.by.mynotes.database.entities.PNote
 class Notes {
 
     companion object {
-        var notes: ArrayList<Note>? = null
-        var pNotes: ArrayList<PNote>? = null
+        var notes: ArrayList<Note> = ArrayList()
+        var pNotes: ArrayList<PNote> = ArrayList()
     }
 }

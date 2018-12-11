@@ -11,10 +11,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.fragment_private_notes.*
 
 import mrtsk.by.mynotes.R
 import mrtsk.by.mynotes.core.model.Notes
-import mrtsk.by.mynotes.database.entities.Note
+import mrtsk.by.mynotes.database.entities.PNote
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +25,7 @@ private const val ARG_PARAM2 = "param2"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [PrivateNotes.OnFragmentInteractionListener] interface
+ * [PrivateNotes.OnPrivateNotesFragmentListener] interface
  * to handle interaction events.
  * Use the [PrivateNotes.newInstance] factory method to
  * create an instance of this fragment.
@@ -34,7 +35,7 @@ class PrivateNotes : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
+    private var listenerPrivateNotes: OnPrivateNotesFragmentListener? = null
 
     private lateinit var recyclerView: RecyclerView
     private var isEmptyDataSet = false
@@ -53,99 +54,82 @@ class PrivateNotes : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        var view: View
-        return if (Notes.notes != null) {
-            view = inflater.inflate(R.layout.fragment_private_notes, container, false)
-            recyclerView = view.findViewById(R.id.rv_common_notes)
-            recyclerView.setHasFixedSize(true)
-            recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
+        val view = inflater.inflate(R.layout.fragment_private_notes, container, false)
+        recyclerView = view.findViewById(R.id.rv_private_notes)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(activity!!.applicationContext)
 
-            val view = if (Notes.notes!!.size == 1) {
-                val adapter = CommonNotes.CommonNotesAdapter(Notes.notes!!, this.context!!)
-                adapter.setOnItemClickListener(object : CommonNotes.CommonNotesAdapter.ClickListener {
-                    override fun onItemClick(position: Int, view: View) {
-                        onItemClick(position)
-                    }
-                })
+        when {
+            Notes.pNotes.size == 0 -> {
+                val adapter = PrivateNotesAdapter(Notes.pNotes, this.context!!)
                 recyclerView.adapter = adapter
-                isEmptyDataSet = false
-                view
-            } else {
-                val adapter =
-                    CommonNotes.CommonNotesAdapter(Notes.notes!!.reversed() as ArrayList<Note>, this.context!!)
-                adapter.setOnItemClickListener(object : CommonNotes.CommonNotesAdapter.ClickListener {
-                    override fun onItemClick(position: Int, view: View) {
-                        onItemClick(position)
-                    }
-                })
-                recyclerView.adapter = adapter
-                isEmptyDataSet = false
-                view
+                isEmptyDataSet = true
             }
-            view
-        } else {
-            isEmptyDataSet = true
-            view = inflater.inflate(R.layout.empty_fragment, container, false)
-            view
+            Notes.pNotes.size == 1 -> {
+                val adapter = PrivateNotesAdapter(Notes.pNotes, this.context!!)
+                adapter.setOnItemClickListener(object : PrivateNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+            }
+            else -> {
+                val adapter = PrivateNotesAdapter(Notes.pNotes.reversed() as ArrayList<PNote>, this.context!!)
+                adapter.setOnItemClickListener(object : PrivateNotesAdapter.ClickListener {
+                    override fun onItemClick(position: Int, view: View) {
+                        onItemClick(position)
+                    }
+                })
+                recyclerView.adapter = adapter
+                isEmptyDataSet = false
+            }
         }
+
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (isEmptyDataSet)
             onDataSetIsEmpty()
+
+        fab_add_private_note.setOnClickListener {
+            listenerPrivateNotes?.onFABPressed()
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     private fun onDataSetIsEmpty() {
-        listener?.onDataSetIsEmpty()
+        listenerPrivateNotes?.onDataSetIsEmptyPrivateNotes()
     }
 
     private fun onItemClick(position: Int) {
-        listener?.onItemClick(position)
+        listenerPrivateNotes?.onItemClickPrivateNotes(position)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
+        if (context is OnPrivateNotesFragmentListener) {
+            listenerPrivateNotes = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+           // throw RuntimeException(context.toString() + " must implement OnPrivateNotesFragmentListener")
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        listenerPrivateNotes = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onDataSetIsEmpty()
-        fun onItemClick(position: Int)
+    interface OnPrivateNotesFragmentListener {
+        fun onDataSetIsEmptyPrivateNotes()
+        fun onItemClickPrivateNotes(position: Int)
+        fun onFABPressed()
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PrivateNotes.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             PrivateNotes().apply {
@@ -156,16 +140,32 @@ class PrivateNotes : Fragment() {
             }
     }
 
-    class PrivateNotesAdapter(private var notes : ArrayList<Note>, val context: Context):
+    class PrivateNotesAdapter(private var notes : ArrayList<PNote>, val context: Context):
         RecyclerView.Adapter<PrivateNotesAdapter.ContentViewHolder>() {
 
         companion object {
             lateinit var clickListener: ClickListener
+            private const val EMPTY_PLACEHOLDER = 0
+            private const val NORMAL_PLACEHOLDER = 1
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            return if (notes.size == 0) {
+                EMPTY_PLACEHOLDER
+            } else {
+                NORMAL_PLACEHOLDER
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, p1: Int): ContentViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.content_item, parent, false)
-            return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
+            return when (p1) {
+                EMPTY_PLACEHOLDER -> ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_fragment, parent, false))
+                NORMAL_PLACEHOLDER -> ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
+                else -> {
+                    return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_fragment, parent, false))
+                }
+            }
+            //return ContentViewHolder(LayoutInflater.from(context).inflate(R.layout.content_item, parent, false))
         }
 
         override fun getItemCount(): Int {
@@ -173,20 +173,25 @@ class PrivateNotes : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
-            holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_pet_category, null)
+            holder.category_image.background = context.resources.getDrawable(R.drawable.rounded_corner_lock_category, null)
             Glide.with(context)
                 .asBitmap()
-                .load(R.drawable.baseline_lock_black_48)
+                .load(R.drawable.baseline_lock_white_48dp)
                 .into(holder.category_image)
 
-            holder.title.text = notes[position].title
-            holder.date_text.text = replaceDate(notes[position].date!!)
+            if (notes[position].title!!.length < 21) {
+                holder.title.text = notes[position].title
+            } else {
+                holder.title.text = "${notes[position].title!!.substring(0, 21)}..."
+            }
 
             if (notes[position].text!!.length < 21) {
                 holder.text.text = notes[position].text
             } else {
                 holder.text.text = "${notes[position].text!!.substring(0, 21)}..."
             }
+
+            holder.date_text.text = replaceDate(notes[position].date!!)
         }
 
         class ContentViewHolder (itemView:View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {

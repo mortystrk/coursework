@@ -2,6 +2,7 @@ package mrtsk.by.mynotes.core
 
 import android.arch.persistence.room.Room
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -10,6 +11,8 @@ import android.view.View
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_note_details.*
 import mrtsk.by.mynotes.R
+import mrtsk.by.mynotes.core.callbacks.DeleteNoteCallback
+import mrtsk.by.mynotes.core.model.Const
 import mrtsk.by.mynotes.core.model.Notes
 import mrtsk.by.mynotes.database.database.AppDatabase
 import mrtsk.by.mynotes.database.entities.Note
@@ -48,6 +51,7 @@ class NoteDetails : AppCompatActivity() {
     private var position: Int = -1
     private lateinit var selectedNote: Note
     private var previousEnabledState = false
+    private var isPrivate = false
     private lateinit var db: AppDatabase
     private var positionInReversedList: Int = -1
 
@@ -66,8 +70,15 @@ class NoteDetails : AppCompatActivity() {
         arguments = intent.extras
         position = arguments.getInt("position")
 
-        selectedNote = Notes.notes!!.reversed()[position]
-        positionInReversedList = Notes.notes!!.indexOf(selectedNote)
+        isPrivate = arguments.getBoolean("private", false)
+
+        selectedNote = if (Notes.notes.size == 1) {
+            Notes.notes[position]
+        } else {
+            Notes.notes.reversed()[position]
+        }
+
+        positionInReversedList = Notes.notes.indexOf(selectedNote)
 
         fillWidgets()
         enableWidget(false)
@@ -132,18 +143,20 @@ class NoteDetails : AppCompatActivity() {
         alertDialog.setTitle("Удаление")
         alertDialog.setMessage("Вы уверены, что хотите удалить заметку?")
         alertDialog.setPositiveButton("Да, удалить") { _, _ ->
-                Notes.notes!!.remove(selectedNote)
+            db.runInTransaction {
                 db.noteDao().deleteNote(selectedNote)
-                et_details_title.text = null
-                et_details_text.text = null
-                iv_details_category.visibility = View.INVISIBLE
-                Snackbar
-                    .make(details_layout, "Заметка удалена!", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Хорошо") {
-                        val intent = Intent(this@NoteDetails, MainActivity::class.java)
-                        intent.putExtra("deleted", true)
-                        startActivity(intent)
-                    }.show()
+            }
+            //Notes.notes.remove(selectedNote)
+            et_details_title.text = null
+            et_details_text.text = null
+            tv_detail_date.text = null
+            iv_details_category.visibility = View.INVISIBLE
+            Snackbar
+                .make(details_layout, "Заметка удалена!", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Хорошо") {
+                    Const.isDelete = true
+                    onBackPressed()
+                }.show()
             }
         alertDialog.setNegativeButton("Отмена") { _, _ ->
                 Snackbar.make(details_layout, "Удаление отменено", Snackbar.LENGTH_SHORT).show()

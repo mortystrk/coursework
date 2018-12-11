@@ -2,13 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
+             android:layout_height="wrap_content"
              tools:context=".core.fragments.PrivateNotes">
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_private_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_note_add_white_48dp"
+            android:layout_alignBottom="@+id/rv_private_notes" android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp" android:layout_marginBottom="15dp"/>
 
     <android.support.v7.widget.RecyclerView
             android:layout_marginTop="10dp"
             android:layout_marginBottom="50dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:id="@+id/rv_private_notes"/>
+
+
 
 </RelativeLayout>

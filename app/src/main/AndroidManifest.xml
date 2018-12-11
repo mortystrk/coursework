@@ -16,8 +16,8 @@
             tools:ignore="GoogleAppIndexingWarning">
         <activity
                 android:name=".core.MainActivity"
-                android:windowSoftInputMode="stateHidden|adjustPan"
-                android:label="Заметки">
+                android:label="Заметки"
+                android:windowSoftInputMode="stateHidden|adjustPan">
         </activity>
         <activity android:name=".core.WelcomeActivity">
             <intent-filter>
@@ -31,8 +31,11 @@
                 android:name="preloaded_fonts"
                 android:resource="@array/preloaded_fonts"/>
 
-        <activity android:name=".core.NoteDetails"
-        android:label="Детали">
+        <activity
+                android:name=".core.NoteDetails"
+                android:label="Детали">
+        </activity>
+        <activity android:name=".core.CreatePrivateNote">
         </activity>
     </application>
 
